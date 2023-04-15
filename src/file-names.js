@@ -17,23 +17,15 @@ const { NotImplementedError } = require('../extensions/index.js');
  */
 function renameFiles(names) {
   let fileObject = {};
-  return names.reduce((acc, cur) => {
-    if (!fileObject[cur]) {
-      fileObject[cur] = 0;
+  return names.reduce((acc, name) => {
+    if (!fileObject[name]) {
+      fileObject[name] = 0;
     }
-    fileObject[cur]++;
-
-    if (fileObject[cur] === 1 && !`${cur}`.match(/\d/)) {
-      acc.push(cur);
-    } else if (`${cur}`.match(/\d/)) {
-
-      if (acc.includes((`${cur}`))) {
-        acc.push(cur.concat(`(${fileObject[cur]})`));
-      } else {
-        acc.push(cur);
-      }
+    if (acc.includes((`${name}`))) {
+      fileObject[name]++;
+      acc.push(`${name}(${fileObject[name]})`);
     } else {
-      acc.push(cur.concat(`(${fileObject[cur] - 1})`));
+      acc.push(name);
     }
     return acc;
   }, []);

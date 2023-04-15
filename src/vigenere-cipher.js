@@ -1,3 +1,4 @@
+
 const { NotImplementedError } = require('../extensions/index.js');
 
 /**
@@ -20,13 +21,77 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  constructor(value) {
+    if (value === false) {
+      this.reverse = true;
+    }
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  encrypt(message, key) {
+    if (!message || !key) {
+      throw new Error('Incorrect arguments!');
+    }
+
+    let plainText = message.toUpperCase().match(/[A-Z]/g);
+    if (plainText === null) {
+      if (this.reverse) {
+        return message.split('').reverse().join('');
+      }
+      return message;
+    }
+    key = key.repeat(Math.ceil(plainText.length / key.length)).slice(0, plainText.length).toUpperCase();
+    let cipherText = [];
+
+    for (let i = 0; i < plainText.length; i++) {
+      let index = this.alphabet.indexOf(plainText[i]) + this.alphabet.indexOf(key[i]);
+      if (index > 25) {
+        index -= 26;
+      }
+      cipherText.push(this.alphabet[index]);
+    }
+
+    for (let i = 0; i < message.length; i++) {
+      if (!this.alphabet.includes(message[i].toUpperCase())) {
+        cipherText.splice(i, 0, message[i]);
+      }
+    }
+
+    if (this.reverse) {
+      cipherText.reverse().join('');
+    }
+    return cipherText.join('');
+  }
+  decrypt(message, key) {
+    if (!message || !key) {
+      throw new Error('Incorrect arguments!');
+    }
+
+    let cipherText = message.match(/[A-Z]/g);
+    if (cipherText === null) {
+      if (this.reverse) {
+        return message.split('').reverse().join('');
+      }
+      return message;
+    }
+    key = key.repeat(Math.ceil(cipherText.length / key.length)).slice(0, cipherText.length).toUpperCase();
+    let plainText = [];
+
+    for (let i = 0; i < cipherText.length; i++) {
+      let index = this.alphabet.indexOf(cipherText[i]) - this.alphabet.indexOf(key[i]);
+      if (index < 0) {
+        index += 26;
+      }
+      plainText.push(this.alphabet[index]);
+    }
+    for (let i = 0; i < message.length; i++) {
+      if (!this.alphabet.includes(message[i])) {
+        plainText.splice(i, 0, message[i]);
+      }
+    }
+    if (this.reverse) {
+      plainText.reverse().join('');
+    }
+    return plainText.join('');
   }
 }
 
